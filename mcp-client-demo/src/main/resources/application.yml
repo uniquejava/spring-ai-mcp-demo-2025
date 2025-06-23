@@ -7,6 +7,12 @@ spring:
       chat:
         options:
           model: qwen-plus
+#    openai:
+#      api-key: ${AI_OPENAI_API_KEY}
+#      base-url: ${AI_OPENAI_BASE_URL}
+#      chat:
+#        options:
+#          model: o4-mini-2025-04-16
     mcp:
       client:
         enabled: true
