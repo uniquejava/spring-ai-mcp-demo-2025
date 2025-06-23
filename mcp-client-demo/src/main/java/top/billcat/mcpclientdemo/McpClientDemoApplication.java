@@ -20,6 +20,7 @@ public class McpClientDemoApplication {
     @Bean
     CommandLineRunner commandLineRunner(List<McpSyncClient> clients, AiService aiService) {
         return args -> {
+            // 测试 McpSyncClient
 //            McpSyncClient mcpSyncClient = clients.get(0);
 //            McpSchema.ListToolsResult listToolsResult = mcpSyncClient.listTools();
 //            listToolsResult.tools().stream().map(tool -> tool.name()).forEach(System.out::println);
@@ -38,7 +39,9 @@ public class McpClientDemoApplication {
 //
 //            // TextContent[audience=null, priority=null, text=9]
 //            add.content().stream().map(Object::toString).forEach(System.out::println);
-            aiService.complete("你是谁?").subscribe(System.out::println);
+
+            // 使用AI Service
+            aiService.complete("简短回答你的名字?").subscribe(System.out::println);
         };
     }
 }
