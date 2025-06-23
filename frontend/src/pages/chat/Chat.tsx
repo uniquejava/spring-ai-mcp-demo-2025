@@ -3,23 +3,42 @@ import { Flex, Layout } from 'antd';
 import { Bubble, Sender } from '@ant-design/x';
 import { useState } from 'react';
 import './Chat.less';
-import { sendMessage } from '@/api/apiService.ts';
+import { getMessages, sendMessage } from '@/api/apiService.ts';
+import { useEffectAsync } from '@/utils/utils.ts';
 
-interface Message {
-  content: string;
-  placement: 'start' | 'end';
-}
+// 定义允许匿名对象扩展的Message类型
+type ChatMessage = {
+  content?: string;
+  sender?: string;
+};
 
 export default function HomePage() {
-  const [messages, setMessages] = useState<Message[]>([{ content: '你好，我是你的智能助手！', placement: 'start' }]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [value, setValue] = useState<string>('');
 
-  const chatId = '123';
+  const chatId = 'default';
+
+  useEffectAsync(async () => {
+    const backendMessages = await getMessages(chatId);
+    // 将后端消息格式映射为前端所需的格式
+    const frontendMessages = backendMessages.map((msg) => ({
+      content: msg.text,
+      sender: msg.messageType === 'USER' ? 'user' : 'assistant',
+    }) satisfies ChatMessage);
+    setMessages((prevMessages: ChatMessage[]) => [
+      ...prevMessages,
+      ...frontendMessages
+    ]);
+  }, []);
 
   const handleSendMessage = async () => {
     if (!value.trim()) return;
 
-    setMessages((prevMessages) => [...prevMessages, { content: value, placement: 'end' }]);
+    // 添加用户消息到聊天记录
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { content: value, sender: 'user' },
+    ]);
 
     setValue('');
 
@@ -30,10 +49,13 @@ export default function HomePage() {
         console.log(chunk);
 
         setMessages((prevMessages) => {
-          if (prevMessages[prevMessages.length - 1].placement === 'end') {
-            return [...prevMessages, { content: accumulatedResponse, placement: 'start' }];
+          if (prevMessages[prevMessages.length - 1]?.sender === 'assistant') {
+            return [
+              ...prevMessages.slice(0, -1),
+              { content: accumulatedResponse, sender: 'assistant' },
+            ];
           }
-          return [...prevMessages.slice(0, -1), { content: accumulatedResponse, placement: 'start' }];
+          return [...prevMessages, { content: accumulatedResponse, sender: 'assistant' }];
         });
       });
     } catch (error) {
@@ -45,7 +67,12 @@ export default function HomePage() {
     <Layout style={{ height: '90vh' }}>
       <Flex gap="middle" vertical>
         {messages.map((msg, index) => (
-          <Bubble key={index} placement={msg.placement} content={msg.content} avatar={{ icon: <UserOutlined /> }} />
+          <Bubble
+            key={index}
+            placement={msg.sender === 'user' ? 'end' : 'start'}
+            content={msg.content}
+            avatar={{ icon: <UserOutlined /> }}
+          />
         ))}
       </Flex>
       <div className="sender-container">

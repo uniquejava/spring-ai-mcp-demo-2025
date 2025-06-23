@@ -1,3 +1,5 @@
+import type { Message } from '@/api/apiModel.ts';
+
 export const sendMessage = async (id: string, message: string, onChunk: (chunk: string) => void): Promise<void> => {
   const response = await fetch('http://localhost:8080/chat', {
     method: 'POST',
@@ -26,4 +28,10 @@ export const sendMessage = async (id: string, message: string, onChunk: (chunk: 
   } finally {
     reader.releaseLock();
   }
+};
+
+export const getMessages = async (id: string): Promise<Message[]> => {
+  const response = await fetch('http://localhost:8080/messages?conversation_id' + id);
+  const json = await response.json();
+  return json;
 };
