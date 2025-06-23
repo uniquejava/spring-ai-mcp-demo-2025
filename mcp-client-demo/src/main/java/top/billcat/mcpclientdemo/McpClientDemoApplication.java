@@ -1,7 +1,13 @@
 package top.billcat.mcpclientdemo;
 
+import io.modelcontextprotocol.client.McpSyncClient;
+import io.modelcontextprotocol.spec.McpSchema;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+import java.util.List;
 
 @SpringBootApplication
 public class McpClientDemoApplication {
@@ -10,4 +16,27 @@ public class McpClientDemoApplication {
         SpringApplication.run(McpClientDemoApplication.class, args);
     }
 
+    @Bean
+    CommandLineRunner commandLineRunner(List<McpSyncClient> clients) {
+        return args -> {
+            McpSyncClient mcpSyncClient = clients.get(0);
+            McpSchema.ListToolsResult listToolsResult = mcpSyncClient.listTools();
+            listToolsResult.tools().stream().map(tool -> tool.name()).forEach(System.out::println);
+
+            McpSchema.CallToolResult getCurrentDateTime = mcpSyncClient.callTool(new McpSchema.CallToolRequest("getCurrentDateTime", "{}"));
+            // TextContent[audience=null, priority=null, text="2025-06-23T13:40:45.720610+08:00[Asia/Shanghai]"]
+            getCurrentDateTime.content().stream().map(Object::toString).forEach(System.out::println);
+
+            String params= """
+                    {
+                     "a": "5",
+                     "b": "4"
+                    }
+                    """;
+            McpSchema.CallToolResult add = mcpSyncClient.callTool(new McpSchema.CallToolRequest("add", params));
+
+            // TextContent[audience=null, priority=null, text=9]
+            add.content().stream().map(Object::toString).forEach(System.out::println);
+        };
+    }
 }
