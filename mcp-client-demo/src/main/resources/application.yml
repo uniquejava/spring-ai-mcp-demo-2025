@@ -35,3 +35,7 @@ spring:
             server1:
               url: http://localhost:9090
               sse-endpoint: /api/v1/sse
+
+  logging.level:
+    io.modelcontextprotocol: TRACE
+    org.springframework.ai.mcp: TRACE
