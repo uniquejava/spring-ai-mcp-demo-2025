@@ -1,5 +1,6 @@
 package top.billcat.mcpclientdemo.service;
 
+import com.alibaba.cloud.ai.memory.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -12,12 +13,16 @@ import reactor.core.publisher.Flux;
 import java.util.List;
 
 @Service
-public class AiServiceTongyiImpl implements AiService {
+public class AiServiceImpl implements AiService {
     private final ChatClient chatClient;
     private final MessageWindowChatMemory messageWindowChatMemory;
 
-    public AiServiceTongyiImpl(ChatClient.Builder builder, ToolCallbackProvider toolCallbackProvider) {
-        this.messageWindowChatMemory = MessageWindowChatMemory.builder().maxMessages(100).build();
+    public AiServiceImpl(ChatClient.Builder builder,
+                         JdbcChatMemoryRepository jdbcChatMemoryRepository,
+                         ToolCallbackProvider toolCallbackProvider) {
+        this.messageWindowChatMemory = MessageWindowChatMemory.builder()
+                .chatMemoryRepository(jdbcChatMemoryRepository)
+                .maxMessages(100).build();
         this.chatClient = builder
                 .defaultToolCallbacks(toolCallbackProvider)
                 .defaultAdvisors(

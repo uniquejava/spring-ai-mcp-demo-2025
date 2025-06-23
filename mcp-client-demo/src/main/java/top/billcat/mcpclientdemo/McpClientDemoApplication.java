@@ -5,12 +5,13 @@ import io.modelcontextprotocol.spec.McpSchema;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import top.billcat.mcpclientdemo.service.AiService;
 
 import java.util.List;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class McpClientDemoApplication {
 
     public static void main(String[] args) {
@@ -41,7 +42,7 @@ public class McpClientDemoApplication {
 //            add.content().stream().map(Object::toString).forEach(System.out::println);
 
             // 使用AI Service
-            aiService.complete("简短回答你的名字?").subscribe(System.out::println);
+//            aiService.complete("简短回答你的名字?").subscribe(System.out::println);
         };
     }
 }
