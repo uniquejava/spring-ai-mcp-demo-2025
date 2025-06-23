@@ -35,17 +35,14 @@ spring:
             server1:
               url: http://localhost:9090
               sse-endpoint: /api/v1/sse
-    chat:
-      memory:
-        repository:
-          jdbc:
-            mysql:
-              jdbc-url: jdbc:mysql://localhost:3306/spring_ai_alibaba_mysql?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
-              username: root
-              password: root
-              driver-class-name: com.mysql.cj.jdbc.Driver
-              enabled: true
-
+    memory:
+      mysql.enabled: true
   logging.level:
     io.modelcontextprotocol: TRACE
     org.springframework.ai.mcp: TRACE
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/spring_ai_alibaba_mysql?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
