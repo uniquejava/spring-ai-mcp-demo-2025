@@ -31,7 +31,7 @@ export const sendMessage = async (id: string, message: string, onChunk: (chunk: 
 };
 
 export const getMessages = async (id: string): Promise<Message[]> => {
-  const response = await fetch('http://localhost:8080/messages?conversation_id' + id);
+  const response = await fetch('http://localhost:8080/messages?conversation_id=' + id);
   const json = await response.json();
   return json;
 };
